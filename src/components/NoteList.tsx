@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Button, Col, Form, Modal, Row, Stack } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import ReactSelect from 'react-select'
 import { Tag } from '../App'
+import { Reducer } from '../state/features/changeTheme/changeThemeSlice'
 import NoteCard from './NoteCard'
 
 export type simplifiedNote ={
@@ -26,6 +28,36 @@ type EditTagsModalProps={
     onDeleteTag: (id: string)=>void
 }
 
+export const customStyles = (theme: string)=>{
+  return {
+  control: (base: any) => ({
+    ...base,
+    color: `${theme==="dark"? "white": "black"}`,
+    background: `${theme ==="dark" &&"#212529"}`,
+  }),
+  menuList: (base:any) => ({
+    ...base,
+    color: `${theme==="dark"? "white": "black"}`,
+    background: `${theme ==="dark" &&"#212529"}`,
+  }),
+  option:(provided: any) => ({
+    ...provided,
+    color: `${theme==="dark"? "white": "black"}`,
+    background: `${theme ==="dark" &&"#212529"}`,
+    '&:hover': {
+      background: `${theme==="dark"&& "black"}`
+    },
+  }),
+  input: (provided: any)=>({
+    ...provided,
+    color: `${theme==="dark"? "white": "black"}`,
+  }),
+  multiValueRemove: (provided: any)=>({
+    ...provided,
+    color: `${"black"}`,
+  }),
+}};
+
 const NoteList = ({availableTags, notes, onDeleteTag, onUpdateTag}: NoteListProps) => {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
     const [title, setTitle] = useState<string>("");
@@ -38,9 +70,12 @@ const NoteList = ({availableTags, notes, onDeleteTag, onUpdateTag}: NoteListProp
 
     const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false)
 
+    const theme = useSelector((state: Reducer) => state.theme.theme);
+
+
   return (
     <>
-    <Row className="align-items-center mb-4">
+    <Row className={`align-items-center mb-4 text-${theme ==="dark"? "light":"dark"}`}>
         <Col><h1>Notes</h1></Col>
         <Col xs="auto">
             <Stack
@@ -48,7 +83,7 @@ const NoteList = ({availableTags, notes, onDeleteTag, onUpdateTag}: NoteListProp
                 direction="horizontal"
             >
                 <Link to="/new">
-                <Button variant='outline-primary'>Create</Button>
+                <Button variant='outline-success'>Create</Button>
                 </Link>
                 <Button variant='outline-secondary'
                 onClick={()=> setEditTagsModalIsOpen(true)}
@@ -57,16 +92,16 @@ const NoteList = ({availableTags, notes, onDeleteTag, onUpdateTag}: NoteListProp
         </Col>
     </Row>
     <Form>
-        <Row className='mb-4'>
-            <Col>
+        <Row className={`mb-4`}>
+            <Col className={`text-${theme ==="dark"? "light":"dark"}`}>
                 <Form.Group controlId='title'>
                     <Form.Label>Title</Form.Label>
-                    <Form.Control type="text" value={title} onChange={e=> setTitle(e.target.value)} />
+                    <Form.Control type="text" value={title} onChange={e=> setTitle(e.target.value)} className={`bg-${theme} text-${theme ==="dark"? "light":"dark"}`}/>
                 </Form.Group>
             </Col>
             <Col>
             <Form.Group controlId="tags">
-              <Form.Label>Tags</Form.Label>
+              <Form.Label className={`text-${theme ==="dark"? "light":"dark"}`}>Tags</Form.Label>
               <ReactSelect
                 value={selectedTags.map(tag => {
                   return { label: tag.label, value: tag.id }
@@ -81,6 +116,7 @@ const NoteList = ({availableTags, notes, onDeleteTag, onUpdateTag}: NoteListProp
                     })
                   )
                 }}
+                styles={customStyles(theme)}
                 isMulti
               />
             </Form.Group>
@@ -114,9 +150,11 @@ function EditTagsModal({
   onDeleteTag,
   onUpdateTag,
 }: EditTagsModalProps){
-  return <Modal show={show} onHide={handleClose}>
-    <Modal.Header closeButton><Modal.Title>Edit Tags</Modal.Title></Modal.Header>
-    <Modal.Body>
+  const theme = useSelector((state: Reducer) => state.theme.theme);
+
+  return <Modal show={show} onHide={handleClose} className={`text-${theme ==="dark"? "light":"dark"}`} >
+    <Modal.Header closeButton className={`bg-${theme}`}><Modal.Title>Edit Tags</Modal.Title></Modal.Header>
+    <Modal.Body className={`bg-${theme}`}>
       <Form>
           <Stack gap={2}>
             {availableTags.map(tag=>{
@@ -126,6 +164,7 @@ function EditTagsModal({
                     type="text"
                     value={tag.label}
                     onChange={(e)=> onUpdateTag(tag.id, e.target.value)}
+                    className={`bg-${theme} text-${theme ==="dark"? "light":"dark"}`}
                   />
                 </Col>
                 <Col xs="auto">

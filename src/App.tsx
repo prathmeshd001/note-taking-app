@@ -9,6 +9,8 @@ import NoteList from "./components/NoteList"
 import NoteLayout from "./components/NoteLayout"
 import Note from "./components/Note"
 import EditNote from "./components/EditNote"
+import NavbarComponent from "./components/NavbarComponent"
+import "./App.scss"
 
 export type Tag={
   id: string
@@ -90,17 +92,20 @@ function App() {
   }
 
   return (
-    <Container className="my-4">
-      <Routes>
-      <Route path="/" element={<NoteList notes={notesWithTags} availableTags={tags} onUpdateTag={onUpdateTag} onDeleteTag={onDeleteTag} />} />
-      <Route path="/new" element={<NewNote onSubmit={onCreateNote} onAddTag={onAddTag} availableTags={tags} />} />
-      <Route path="/:id" element={<NoteLayout notes={notesWithTags} />} >
-      <Route index element={<Note onDelete={onDeleteNote}/>} />
-      <Route path="edit" element={<EditNote onSubmit={onUpdateNote} onAddTag={onAddTag} availableTags={tags} />} />
-      </Route>
-      <Route path="*" element={ <Navigate to="/" />} />
-    </Routes>
-    </Container>
+    <>
+      <NavbarComponent />
+      <Container className="my-4">
+        <Routes>
+        <Route path="/" element={<NoteList notes={notesWithTags} availableTags={tags} onUpdateTag={onUpdateTag} onDeleteTag={onDeleteTag} />} />
+        <Route path="/new" element={<NewNote onSubmit={onCreateNote} onAddTag={onAddTag} availableTags={tags} />} />
+        <Route path="/:id" element={<NoteLayout notes={notesWithTags} />} >
+        <Route index element={<Note onDelete={onDeleteNote}/>} />
+        <Route path="edit" element={<EditNote onSubmit={onUpdateNote} onAddTag={onAddTag} availableTags={tags} />} />
+        </Route>
+        <Route path="*" element={ <Navigate to="/" />} />
+      </Routes>
+      </Container>
+    </>
     
   )
 }

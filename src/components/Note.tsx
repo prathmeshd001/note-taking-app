@@ -1,6 +1,8 @@
 import { Badge, Button, Col, Row, Stack } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { Reducer } from "../state/features/changeTheme/changeThemeSlice";
 import { useNote } from "./NoteLayout"
 
 type NoteProps = {
@@ -10,10 +12,11 @@ type NoteProps = {
 export default function Note({onDelete}: NoteProps) {
     const note = useNote();
     const navigate = useNavigate();
+    const theme = useSelector((state: Reducer) => state.theme.theme);
     
     return (
         <>
-            <Row>
+            <Row className={`text-${theme ==="dark"? "light":"dark"}`}>
                 <Col className="align-items-center mb-4">
                     <Col>
                         <h1>{note.title}</h1>
@@ -49,7 +52,7 @@ export default function Note({onDelete}: NoteProps) {
                     </Stack>
                 </Col>
             </Row>
-            <ReactMarkdown>{note.markdown}</ReactMarkdown>
+            <ReactMarkdown className={`text-${theme ==="dark"? "light":"dark"}`}>{note.markdown}</ReactMarkdown>
         </>
     )
 }

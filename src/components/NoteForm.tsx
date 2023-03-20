@@ -4,6 +4,9 @@ import { Link, useNavigate} from 'react-router-dom'
 import CreatableReactSelect from "react-select/creatable"
 import { NoteData, Tag } from '../App'
 import { v4 as uuidv4 } from 'uuid';
+import { useSelector } from 'react-redux'
+import { Reducer } from '../state/features/changeTheme/changeThemeSlice'
+import {customStyles} from "./NoteList"
 
 type NoteFormProps = {
     onSubmit: (data: NoteData)=> void
@@ -16,6 +19,8 @@ const NoteForm = ({title="", markdown="", tags=[], onSubmit, onAddTag, available
     const markdownRef = useRef<HTMLTextAreaElement>(null);
     const [selectedTags, setSelectedTags] = useState<Tag[]>(tags)
     const navigate= useNavigate();
+    const theme = useSelector((state: Reducer) => state.theme.theme);
+
 
     function handleSubmit(e: FormEvent){
         e.preventDefault();
@@ -29,13 +34,13 @@ const NoteForm = ({title="", markdown="", tags=[], onSubmit, onAddTag, available
     }
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} className={`text-${theme==="dark" && "light"}`}>
             <Stack gap={4}>
                 <Row>
                     <Col>
                     <Form.Group controlId='title'>
                         <Form.Label>Title</Form.Label>
-                        <Form.Control required placeholder='Note title' ref={titleRef} defaultValue={title} />
+                        <Form.Control required placeholder='Note title' ref={titleRef} defaultValue={title} className={`bg-${theme} text-${theme ==="dark"? "light":"dark"}`}/>
                     </Form.Group>
                     </Col>
 
@@ -55,16 +60,17 @@ const NoteForm = ({title="", markdown="", tags=[], onSubmit, onAddTag, available
                                 onAddTag(newTag);
                                 setSelectedTags(prev=> [...prev, newTag]);
                             }}
+                            styles={customStyles(theme)}
                         />
                     </Form.Group>
                     </Col>
                 </Row>
                 <Form.Group controlId='markdown'>
                     <Form.Label>Body</Form.Label>
-                    <Form.Control required placeholder='Note body' as="textarea" rows={15} ref={markdownRef} defaultValue={markdown} />
+                    <Form.Control required placeholder='Note body' as="textarea" rows={15} ref={markdownRef} defaultValue={markdown} className={`bg-${theme} text-${theme ==="dark"? "light":"dark"}`} />
                 </Form.Group>
                 <Stack direction='horizontal' gap={2} className="justify-content-end">
-                    <Button type='submit' variant='outline-primary'>Save</Button>
+                    <Button type='submit' variant='outline-success'>Save</Button>
                     <Link to="..">
                     <Button type='button' variant='outline-secondary'>Cancel</Button>
                     </Link>
